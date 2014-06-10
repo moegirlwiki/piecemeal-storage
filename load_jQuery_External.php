@@ -11,8 +11,12 @@ function fnRemoveAnnoingJS($skin, &$text) {
 jQuery.noConflict(true);
  
 /*]]>*/
-</script>'; 
+</script>'.
+  $n.
+  '<script type="text/javascript" src="/fileYouWantToWorkWithoutStupidBuggy.1.4.2.js"></script>';
+ 
   return true;
+ 
 }
  
 //添加外部JS

@@ -1,5 +1,6 @@
 $wgHooks['SkinAfterBottomScripts'][] = 'fnRemoveAnnoingJS';
- 
+
+//去除mediawiki默认jQuery
 function fnRemoveAnnoingJS($skin, &$text) {
  
   $n = "\n";
@@ -14,6 +15,7 @@ jQuery.noConflict(true);
   return true;
 }
  
+//添加外部JS
 $wgHooks['ParserBeforeTidy'][] = 'wgAddJquery';
  
 function wgAddJquery(&$parser, &$text) {

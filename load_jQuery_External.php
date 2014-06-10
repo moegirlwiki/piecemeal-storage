@@ -1,6 +1,6 @@
 $wgHooks['SkinAfterBottomScripts'][] = 'fnRemoveAnnoingJS';
 
-//去除mediawiki默认jQuery
+//使得不需要jquery的代码不用jquery
 function fnRemoveAnnoingJS($skin, &$text) {
  
   $n = "\n";

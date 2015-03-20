@@ -12,7 +12,7 @@ backend MainPHP {
 
 backend HHVM {
     .host = "";
-    .port = "80";
+    .port = "8080";
 	.first_byte_timeout = 60s;
 		.probe = {
 		.url = "/Mainpage";

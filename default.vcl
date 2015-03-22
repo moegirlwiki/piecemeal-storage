@@ -254,44 +254,6 @@ sub vcl_deliver {
 }
 
 sub vcl_error {
-	if(obj.status == 750) {
-		set obj.http.Content-Type = "text/html; charset=utf-8"; 
-		synthetic {"
-   <html>
-    <head>
-     <script language="javascript">
-       <!--
-         function confirmation() {
-			var d = new Date();
-			d.setTime(d.getTime()+(60*60*1000));
-			var expires = "expires="+d.toGMTString();
-			var msg_text = unescape("%u70B9%u51FB%22%u786E%u5B9A%22%u8DF3%u8F6C%u5230%u624B%u673A%u7248%u9875%u9762%uFF0C%u70B9%u51FB%22%u53D6%u6D88%22%u7EE7%u7EED%u8BBF%u95EE");
-           //var answer = confirm("Press \"OK\" to be redirected to the mobile page or \"Cancel\" to continue.");
-		   var answer = confirm(msg_text);
-           if (answer) {
-			document.cookie = "direct_mobile=1; " + expires;
-             window.location = "http://m.moegirl.org"} + req.url + {"";
-           }
-           else { 
-			 document.cookie = "direct_mobile=0; " + expires;
-             window.location = "http://zh.moegirl.org"} + req.url + {"";
-           }
-         } //-->
-      </script>
-    </head>
-    <body onload="confirmation();">
-      <p></p>
-    </body>
-  </html>
-    "};
-		set obj.status = 200;
-		return(deliver);
-	} else if(obj.status == 751) {
-		set obj.http.Location = "http://m.moegirl.org" + req.url;
-		set obj.status = 302;
-		return(deliver);
-	}
-	
 	# For 500 error 500错误用设置
 #	if (obj.status >= 500 && obj.status <= 505) {
 #		synthetic(std.fileread("/etc/varnish/50X.html"));

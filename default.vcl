@@ -63,13 +63,9 @@ sub vcl_recv {
 		 
 	#手机跳转判断，先判定再重新bits.moegirl.org，顺序不能反
 	if (req.http.host == "zh.moegirl.org"){
-		if(req.http.Cookie !~ "direct_mobile") {
-			call devicedetect;
-			if (req.http.X-UA-Device ~ "^mobile" || req.http.X-UA-device ~ "^tablet") {
-				error 750 "Moved Temporarily";
-			}	
-		}else if(req.http.Cookie ~ "direct_mobile=1" && req.url !~ "no_direct$") {
-			error 751 "Moved Temporarily";
+		call devicedetect;
+		if (req.http.X-UA-Device ~ "^mobile" || req.http.X-UA-device ~ "^tablet") {
+			set req.http.X-WAP = req.http.X-UA-Device;
 		}
 	}
 

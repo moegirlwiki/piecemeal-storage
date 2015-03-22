@@ -5,7 +5,7 @@ import std;
 
 backend MainPHP {
     .host = "";
-    .port = "8080";
+    .port = "80";
 	.first_byte_timeout = 60s;
 
 }
@@ -59,15 +59,18 @@ sub vcl_recv {
 			set req.http.X-Forwarded-For = client.ip;
 		}
 	}
-		 
+	
+	
 	#手机跳转判断，先判定再重新bits.moegirl.org，顺序不能反
 		#如果请求zh.moegirl.org
 		if (req.http.host == "zh.moegirl.org"){
-			if(req.http.Cookie !~ "stopMobileRedirect") {
+			if ( !(req.url ~ "toggle_view_desktop" ||req.http.Cookie ~ "stopMobileRedirect") ) {
 				call devicedetect;
+				
 				if (req.http.X-UA-Device ~ "^mobile" || req.http.X-UA-device ~ "^tablet") {
 					error 751 "Moved Temporarily";
 				}
+				
 			}
 		}
 		#如果请求m.moegirl.org
@@ -75,11 +78,14 @@ sub vcl_recv {
 			set req.http.X-WAP = req.http.X-UA-Device;
 		}
 
+		
 	#判断转发给哪台机子
-		if (! (req.http.host ~ "zh\.moegirl\.org" || req.http.host ~ "bits\.moegirl\.org") ){  #非zh.moegirl.org bits.moegirl.org的请求丢回旧机处理
+		if (! (req.http.host ~ "zh\.moegirl\.org" || req.http.host ~ "m\.moegirl\.org" || req.http.host ~ "bits\.moegirl\.org") ){  #非zh m bits.moegirl.org的请求丢回旧机处理
 			set req.backend = MainPHP;
+        }else if (req.http.host ~ "m\.moegirl\.org") {
+			set req.backend = HHVM;
 		}else{
-            		set req.backend = MoegirlphpGroup; #如果请求的是一般页面浏览
+            set req.backend = MoegirlphpGroup;  #这几个繁忙站 zh bits m也要双机均衡负责
 			
 			# 健康时HHVM，挂了回源MainPHP
 			#  if( req.backend.healthy )  {
@@ -87,7 +93,7 @@ sub vcl_recv {
 			#  } else {
 			#	set req.backend = MainPHP;
 			#  }
-        	}
+        }
 		
 
 	#把bits.moegirl.org/XX/load.php 重定向到 XX.moegirl.org/load.php

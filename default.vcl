@@ -37,12 +37,8 @@ acl purge {
 sub vcl_recv {
 	
 #双层varnish设置
-	if (req.restarts == 0) {
-		if (req.http.X-Forwarded-For) {
-			set req.http.X-Forwarded-For = req.http.X-Forwarded-For;
-		} else {
+	if ( (req.restarts == 0) && !(req.http.X-Forwarded-For) ) {
 			set req.http.X-Forwarded-For = client.ip;
-		}
 	}
 
 #set req.http.X-Forwarded-For = client.ip;
